@@ -1,0 +1,54 @@
+application {
+  config {
+    baseName blog
+    applicationType monolith
+    packageName com.blog
+    buildTool maven
+    serverPort 8080
+    authenticationType jwt
+    databaseType mongodb
+    cacheProvider no
+    clientFramework angularX
+    clientPackageManager npm
+
+  }
+  entities *
+  dto * with mapstruct
+  service * with serviceImpl
+}
+
+entity User {
+  name String required minlength(2)
+  age String required 
+}
+
+entity Blog {
+  name String required minlength(3)
+  handle String required minlength(2)
+}
+
+entity Post {
+  /** 标题 */
+  title String required
+  /** 内容 */
+  content TextBlob required
+  /** 时间 */
+  date Instant required
+}
+
+entity Tag {
+  /** 标签 */
+  name String required minlength(2)
+}
+
+relationship ManyToOne {
+  Blog{user} to User
+  Post{blog(name)} to Blog
+}
+
+relationship ManyToMany {
+  Post{tag(name)} to Tag{entry}
+}
+
+paginate Post, Tag with infinite-scroll
+service all with serviceImpl
